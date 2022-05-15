@@ -17,9 +17,6 @@ func init() {
 }
 
 func main() {
-	startingRow := make([]bool, width)
-	startingRow[width/2] = true
-
 	ca := NewCellularAutomata(rule, '0', ' ', width)
 
 	buf := bytes.NewBuffer(make([]byte, (width+2)*length))

@@ -35,6 +35,7 @@ func main() {
 type CellularAutomata struct {
 	rule         byte
 	currentRow   []bool
+	nextRow      []bool
 	onCharacter  byte
 	offCharacter byte
 	width        int
@@ -47,6 +48,7 @@ func NewCellularAutomata(rule int, onCharacter, offCharacter byte, width int) *C
 	return &CellularAutomata{
 		rule:         uint8(rule),
 		currentRow:   startingRow,
+		nextRow:      make([]bool, width),
 		onCharacter:  onCharacter,
 		offCharacter: offCharacter,
 		width:        width,
@@ -69,7 +71,6 @@ func (ca *CellularAutomata) CurrentRow() []byte {
 
 func (ca *CellularAutomata) NextRow() []byte {
 	result := make([]byte, ca.width)
-	nextRow := make([]bool, ca.width)
 
 	var index int
 
@@ -88,14 +89,14 @@ func (ca *CellularAutomata) NextRow() []byte {
 
 		if (ca.rule>>index)&1 == 1 {
 			result[i] = ca.onCharacter
-			nextRow[i] = true
+			ca.nextRow[i] = true
 		} else {
 			result[i] = ca.offCharacter
-			nextRow[i] = false
+			ca.nextRow[i] = false
 		}
 	}
 
-	ca.currentRow = nextRow
+	ca.currentRow, ca.nextRow = ca.nextRow, ca.currentRow
 
 	return result
 }

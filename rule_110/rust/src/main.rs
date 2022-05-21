@@ -79,15 +79,15 @@ impl CellularAutomata {
                 index += 2;
             }
 
-            if i != self.width.clone() - 1 && self.current_row[i.clone() + 1] != 0 {
+            if i != self.width - 1 && self.current_row[i + 1] != 0 {
                 index += 1;
             }
 
-            if (self.rule.clone() >> index) & 1 == 1 {
-                self.next_row[i.clone()] = 1;
+            if (self.rule >> index) & 1 == 1 {
+                self.next_row[i] = 1;
                 s.push(self.on_character)
             } else {
-                self.next_row[i.clone() as usize] = 0;
+                self.next_row[i] = 0;
                 s.push(self.off_character)
             }
         }

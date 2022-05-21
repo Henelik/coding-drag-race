@@ -17,9 +17,11 @@ func init() {
 }
 
 func main() {
+	flag.Parse()
+
 	ca := NewCellularAutomata(rule, '0', ' ', width)
 
-	buf := bytes.NewBuffer(make([]byte, (width+2)*length))
+	buf := bytes.NewBuffer(make([]byte, (width+1)*length))
 
 	buf.Write(ca.CurrentRow())
 	buf.Write([]byte("\n"))

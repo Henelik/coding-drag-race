@@ -19,16 +19,17 @@ struct Args {
 fn main() {
     let args = Args::parse();
     let mut ca = CellularAutomata::new(args.rule, '0', ' ', args.width);
-    let mut s = String::new();
+    let mut s = String::with_capacity((args.width + 1) * args.length);
 
     ca.get_current_row(&mut s);
-    println!("{}", s);
+    s.push('\n');
 
     for _ in 0..args.length {
-        s.clear();
         ca.next_row(&mut s);
-        println!("{}", s)
+        s.push('\n');
     }
+
+    println!("{}", s);
 }
 
 struct CellularAutomata {
@@ -71,7 +72,7 @@ impl CellularAutomata {
         for i in 0..self.width {
             index = 0;
 
-            if i != 0 && self.current_row[i - 1] != 0 {
+            if self.current_row[(i + self.width - 1 ) % self.width] != 0 {
                 index += 4;
             }
 
@@ -79,7 +80,7 @@ impl CellularAutomata {
                 index += 2;
             }
 
-            if i != self.width - 1 && self.current_row[i + 1] != 0 {
+            if self.current_row[(i + 1) % self.width] != 0 {
                 index += 1;
             }
 

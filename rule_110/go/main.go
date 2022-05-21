@@ -77,13 +77,13 @@ func (ca *CellularAutomata) NextRow() []byte {
 	for i := 0; i < ca.width; i++ {
 		index = 0
 
-		if i != 0 && ca.currentRow[i-1] {
+		if ca.currentRow[(i-1+ca.width)%ca.width] {
 			index += 4
 		}
 		if ca.currentRow[i] {
 			index += 2
 		}
-		if i != ca.width-1 && ca.currentRow[i+1] {
+		if ca.currentRow[(i+1)%ca.width] {
 			index += 1
 		}
 

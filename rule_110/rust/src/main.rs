@@ -36,8 +36,7 @@ struct CellularAutomata {
     rule: u8,
     current_row: Vec<u8>,
     next_row: Vec<u8>,
-    on_character: char,
-    off_character: char,
+    characters: Vec<char>,
     width: usize,
 }
 
@@ -50,47 +49,27 @@ impl CellularAutomata {
             rule,
             current_row: first_row,
             next_row: vec![0; width],
-            on_character,
-            off_character,
+            characters: vec![on_character, off_character],
             width,
         };
     }
 
     pub fn get_current_row(&self, s: &mut String) {
         for i in &self.current_row {
-            if i == &0 {
-                s.push(self.off_character)
-            } else {
-                s.push(self.on_character)
-            }
+            s.push(self.characters[(i == &0) as usize])
         }
     }
 
     pub fn next_row(&mut self, s: &mut String) {
-        let mut index: u32;
+        let mut index: u8;
 
         for i in 0..self.width {
-            index = 0;
+            index = (4 * self.current_row[(i + self.width - 1) % self.width])
+                + (2 * self.current_row[i])
+                + (self.current_row[(i + 1) % self.width]);
 
-            if self.current_row[(i + self.width - 1 ) % self.width] != 0 {
-                index += 4;
-            }
-
-            if self.current_row[i] != 0 {
-                index += 2;
-            }
-
-            if self.current_row[(i + 1) % self.width] != 0 {
-                index += 1;
-            }
-
-            if (self.rule >> index) & 1 == 1 {
-                self.next_row[i] = 1;
-                s.push(self.on_character)
-            } else {
-                self.next_row[i] = 0;
-                s.push(self.off_character)
-            }
+            self.next_row[i] = (self.rule >> index) & 1;
+            s.push(self.characters[self.next_row[i] as usize]);
         }
 
         std::mem::swap(&mut self.current_row, &mut self.next_row);

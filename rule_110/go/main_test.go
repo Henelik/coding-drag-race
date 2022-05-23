@@ -7,7 +7,7 @@ import (
 func BenchmarkCellularAutomata_CurrentRow(b *testing.B) {
 	b.StopTimer()
 
-	width = 1024000
+	width = 1024
 
 	ca := NewCellularAutomata(30, '0', ' ', width)
 	bytes := make([]byte, width)

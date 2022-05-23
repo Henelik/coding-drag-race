@@ -35,25 +35,23 @@ func main() {
 }
 
 type CellularAutomata struct {
-	rule         byte
-	currentRow   []bool
-	nextRow      []bool
-	onCharacter  byte
-	offCharacter byte
-	width        int
+	rule       byte
+	currentRow []byte
+	nextRow    []byte
+	characters []byte
+	width      int
 }
 
 func NewCellularAutomata(rule int, onCharacter, offCharacter byte, width int) *CellularAutomata {
-	startingRow := make([]bool, width)
-	startingRow[width/2] = true
+	startingRow := make([]byte, width)
+	startingRow[width/2] = 1
 
 	return &CellularAutomata{
-		rule:         uint8(rule),
-		currentRow:   startingRow,
-		nextRow:      make([]bool, width),
-		onCharacter:  onCharacter,
-		offCharacter: offCharacter,
-		width:        width,
+		rule:       uint8(rule),
+		currentRow: startingRow,
+		nextRow:    make([]byte, width),
+		characters: []byte{offCharacter, onCharacter},
+		width:      width,
 	}
 }
 
@@ -61,11 +59,7 @@ func (ca *CellularAutomata) CurrentRow() []byte {
 	result := make([]byte, ca.width)
 
 	for i := 0; i < ca.width; i++ {
-		if ca.currentRow[i] {
-			result[i] = ca.onCharacter
-		} else {
-			result[i] = ca.offCharacter
-		}
+		result[i] = ca.characters[ca.currentRow[i]]
 	}
 
 	return result
@@ -77,25 +71,12 @@ func (ca *CellularAutomata) NextRow() []byte {
 	var index int
 
 	for i := 0; i < ca.width; i++ {
-		index = 0
+		index = 4*int(ca.currentRow[(i-1+ca.width)%ca.width]) +
+			2*int(ca.currentRow[i]) +
+			int(ca.currentRow[(i+1)%ca.width])
 
-		if ca.currentRow[(i-1+ca.width)%ca.width] {
-			index += 4
-		}
-		if ca.currentRow[i] {
-			index += 2
-		}
-		if ca.currentRow[(i+1)%ca.width] {
-			index += 1
-		}
-
-		if (ca.rule>>index)&1 == 1 {
-			result[i] = ca.onCharacter
-			ca.nextRow[i] = true
-		} else {
-			result[i] = ca.offCharacter
-			ca.nextRow[i] = false
-		}
+		ca.nextRow[i] = (ca.rule >> index) & 1
+		result[i] = ca.characters[ca.nextRow[i]]
 	}
 
 	ca.currentRow, ca.nextRow = ca.nextRow, ca.currentRow

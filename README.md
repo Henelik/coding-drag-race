@@ -1,4 +1,4 @@
-# coding-drag-race
+# Coding Drag Race
 Drag racing vanilla programming languages at various computational tasks.
 
 ## Rules:
